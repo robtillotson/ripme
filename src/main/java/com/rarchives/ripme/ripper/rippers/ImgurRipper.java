@@ -87,11 +87,11 @@ public class ImgurRipper extends AlbumRipper {
                     albumDoc = Http.url(url).get();
                 }
                 String title = albumDoc.title();
-                if (!title.contains(" - Imgur")
+                if (!title.contains(" - Album on Imgur")
                         || title.contains("'s albums")) {
                     throw new IOException("No title found");
                 }
-                title = title.replaceAll(" - Imgur.*", "");
+                title = title.replaceAll(" - Album on Imgur.*", "");
                 return "imgur_" + gid + " (" + title + ")";
             } catch (IOException e) {
                 // Fall back to default album naming convention
@@ -197,11 +197,11 @@ public class ImgurRipper extends AlbumRipper {
         m = p.matcher(doc.body().html());
         if (m.matches()) {
             try {
-                ImgurAlbum imgurAlbum = new ImgurAlbum(url);
                 JSONObject json = new JSONObject(m.group(1));
                 JSONArray images = json.getJSONObject("image")
                                        .getJSONObject("album_images")
                                        .getJSONArray("images");
+                ImgurAlbum imgurAlbum = new ImgurAlbum(url, json.getJSONObject("image").getString("title"));
                 int imagesLength = images.length();
                 for (int i = 0; i < imagesLength; i++) {
                     JSONObject image = images.getJSONObject(i);
